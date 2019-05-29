@@ -95,14 +95,21 @@ public class TelaOperacoes {
 
         Button btnCredito = new Button("Credito");
         Button btnDebito = new Button("Debito");
-        Button btnVoltar = new Button("Voltar");
+		Button btnVoltar = new Button("Voltar");
+		Button btnEstatistica = new Button("Estatistica");
         HBox hbBtn = new HBox(20);
         hbBtn.setAlignment(Pos.TOP_CENTER);
         hbBtn.getChildren().add(btnCredito);
         hbBtn.getChildren().add(btnDebito);
-        hbBtn.getChildren().add(btnVoltar);
+		hbBtn.getChildren().add(btnVoltar);
+		hbBtn.getChildren().add(btnEstatistica);
         grid.add(hbBtn, 1, 2);
-        
+        btnEstatistica.setOnAction(e->{
+			//aqui eu irei passar o mes atual e com o metodo já fazer os calculos necessarios
+			TelaEstatistica toper = new TelaEstatistica(mainStage, cenaEntrada,conta,operacoes);
+			Scene scene = toper.getTelaEstatistica();
+			mainStage.setScene(scene);
+		});
         btnCredito.setOnAction(e->{
         	try {
         	  double valor = Integer.parseInt(tfValorOperacao.getText());
