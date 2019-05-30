@@ -1,6 +1,5 @@
 package com.bcopstein.ExercicioRefatoracaoBanco;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -20,22 +19,26 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 //Ajustar a tela para os dados necessarios e modificacoes necessarias dela inicialmente só o visual 
 public class TelaEstatistica {
-	private Stage mainStage; 
-	private Scene cenaEntrada;
-	private Scene cenaOperacoes;
-	private List<Operacao> operacoes;
+
+    private static final int DIAS_NO_MES = 30;
+
+    private Stage mainStage;
+    private Scene cenaEntrada;
+    private Scene cenaOperacoes;
+    private List<Operacao> operacoes;
     private ObservableList<Operacao> operacoesConta;
     private GregorianCalendar gc = new GregorianCalendar();
 
-	private Conta conta; 
+    private Conta conta;
     private TextField tfValorMesSelect;
-    public double saldoMedioMes(int mes){
-        double saldo = 0;
-        int diasNoMes = 30;
-        List<Double> saldosMes = new ArrayList<>(diasNoMes);
+
+    public double saldoMedioMes(int mes) {
+        double[] saldosMes = new double[DIAS_NO_MES];
         double saldoTotal = 0;
+
         for (Operacao operacao : operacoesConta) {
             if (operacao.getTipoOperacao() == 0) {
                 saldoTotal += operacao.getValorOperacao();
@@ -44,19 +47,18 @@ public class TelaEstatistica {
             }
             if (operacao.getMes() == mes) {
                 // dia - 1 para ajustar o indice do array
-                saldosMes.add(operacao.getDia() - 1, saldoTotal);
+                saldosMes[operacao.getDia() - 1] = saldoTotal;
             }
         }
+
         // Repete o saldo anterior em dias sem operações
-        for (int i = 1; i < saldosMes.size(); i++) {
-            if (saldosMes.get(i) == null) {
-                saldosMes.add(i, saldosMes.get(i - 1));
+        for (int i = 1; i < saldosMes.length; i++) {
+            if (saldosMes[i] == 0) {
+                saldosMes[i] = saldosMes[i - 1];
             }
         }
-        for (Double saldo1 : saldosMes){
-            saldo += saldo1;
-        }
-       return  saldoTotal; 
+
+        return saldoTotal;
     }
 
 
@@ -78,7 +80,7 @@ public class TelaEstatistica {
         Text scenetitle = new Text(dadosCorr);
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
-        operacoesConta = 
+        operacoesConta =
         FXCollections.observableArrayList(
                 operacoes
                 .stream()
@@ -86,7 +88,7 @@ public class TelaEstatistica {
                 .collect(Collectors.toList())
                 );
 
-        int mesSelectAtual = gc.get(Calendar.MONTH);
+        int mesSelectAtual = gc.get(Calendar.MONTH) + 1;
         int quantidadeDebitoContaAtual = 0;
         double totalDebitoContaAtual = 0;
         int quantidadeCreditoContaAtual = 0;
@@ -108,7 +110,7 @@ public class TelaEstatistica {
         String quantidadeCredito = "Quantidade Crédito: "+quantidadeCreditoContaAtual;
         String totalDebito = "Total de Débito: "+totalDebitoContaAtual;
         String quantidadeDebito = "Quantidade Débito: "+quantidadeDebitoContaAtual;
-        String saldoMedio = "Saldo Médio: "+ saldoMedioAtual; 
+        String saldoMedio = "Saldo Médio: "+ saldoMedioAtual;
         Label cat = new Label(mes);
         grid.add(cat, 0, 1);
 
@@ -120,7 +122,7 @@ public class TelaEstatistica {
 
         Label lTotalDebito = new Label(totalDebito);
         grid.add(lTotalDebito, 0, 4);
-        
+
         Label  lQuantidadeDebito = new Label(quantidadeDebito);
         grid.add(lQuantidadeDebito,0,5);
 
@@ -128,11 +130,11 @@ public class TelaEstatistica {
         grid.add(lSaldoMedio,0,6);
 
         tfValorMesSelect = new TextField();
-        HBox valOper = new HBox(30);        
+        HBox valOper = new HBox(30);
         valOper.setAlignment(Pos.BOTTOM_CENTER);
         valOper.getChildren().add(new Label("Digite o mes"));
         valOper.getChildren().add(tfValorMesSelect);
-        grid.add(valOper, 1, 1);        
+        grid.add(valOper, 1, 1);
 
         Button btnPesquisar = new Button("Pesquisar");
         Button btnVoltar = new Button("Voltar");
@@ -141,7 +143,7 @@ public class TelaEstatistica {
         hbBtn.getChildren().add(btnPesquisar);
         hbBtn.getChildren().add(btnVoltar);
         grid.add(hbBtn, 1, 2);
-        
+
         btnPesquisar.setOnAction(e->{
                 int mesSelect = Integer.parseInt(tfValorMesSelect.getText());
                 int quantidadeDebitoConta = 0;
@@ -163,9 +165,9 @@ public class TelaEstatistica {
                 cat.setText("Mês selecionado: "+ mesSelect);
                 lQuantidadeDebito.setText("Quantidade Débito: "+ quantidadeDebitoConta);
                 lTotalDebito.setText("Total Débito: "+ totalDebitoConta);
-                lTotalCredito.setText("Total Crédito: "+ totalCreditoConta); 
-                lQuantidadeCredito.setText("Quantidade Crédito: "+ quantidadeCreditoConta);  
-                lSaldoMedio.setText("Saldo Médio: "+ saldoMedioMes);   	
+                lTotalCredito.setText("Total Crédito: "+ totalCreditoConta);
+                lQuantidadeCredito.setText("Quantidade Crédito: "+ quantidadeCreditoConta);
+                lSaldoMedio.setText("Saldo Médio: "+ saldoMedioMes);
         });
 
         btnVoltar.setOnAction(e->{
@@ -173,7 +175,7 @@ public class TelaEstatistica {
             Scene scene = toper.getTelaOperacoes();
             mainStage.setScene(scene);
         });
-		
+
         cenaOperacoes = new Scene(grid);
         return cenaOperacoes;
 	}
