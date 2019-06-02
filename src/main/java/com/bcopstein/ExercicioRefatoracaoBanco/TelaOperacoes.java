@@ -14,6 +14,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,9 @@ public class TelaOperacoes {
     private final Scene cenaEntrada;
     private final List<Operacao> operacoes;
     private final Conta conta;
-
+    private int diaDeOperacao;
+    private double retiradaDia;
+    GregorianCalendar gc = new GregorianCalendar();
     private final TextField tfValorOperacao = new TextField();
     private final TextField tfSaldo = new TextField();
     private final Label lCategoria = new Label();
@@ -34,6 +37,8 @@ public class TelaOperacoes {
         this.cenaEntrada = telaEntrada;
         this.conta = conta;
         this.operacoes = operacoes;
+        //Variavel já pega o dia atual para as operacoes
+        this.diaDeOperacao = gc.get(Calendar.DAY_OF_MONTH) + 1;
     }
 
     public Scene getTelaOperacoes() {
@@ -135,23 +140,42 @@ public class TelaOperacoes {
                 if (valor < 0.0 || valor > conta.getSaldo()) {
                     throw new NumberFormatException("Saldo insuficiente");
                 }
-                conta.retirada(valor);
-                GregorianCalendar date = new GregorianCalendar();
-                Operacao op = new Operacao(
-                    date.get(GregorianCalendar.DAY_OF_MONTH),
-                    date.get(GregorianCalendar.MONTH) + 1,
-                    date.get(GregorianCalendar.YEAR),
-                    date.get(GregorianCalendar.HOUR),
-                    date.get(GregorianCalendar.MINUTE),
-                    date.get(GregorianCalendar.SECOND),
-                    conta.getNumero(),
-                    conta.getStatus(),
-                    valor,
-                    1
-                );
-                operacoes.add(op);
-                operacoesConta.add(op);
-                atualizaTela();
+                
+                GregorianCalendar date = new GregorianCalendar(); 
+                int dia =  date.get(GregorianCalendar.DAY_OF_MONTH);
+                double valorTotalDia = 0;
+                for (Operacao op: operacoesConta) {
+                    if (op.getDia() == dia) {
+                        if (op.getTipoOperacao() == 1) {
+                            valorTotalDia += op.getValorOperacao();
+                        }
+                    }
+                }
+                if (valorTotalDia >= conta.getLimRetiradaDiaria()) {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Limite atingido !!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Limite diário para debito atingido!");
+                    alert.showAndWait();
+                } else {
+                    conta.retirada(valor);
+
+                    Operacao op = new Operacao(
+                        date.get(GregorianCalendar.DAY_OF_MONTH),
+                        date.get(GregorianCalendar.MONTH) + 1,
+                        date.get(GregorianCalendar.YEAR),
+                        date.get(GregorianCalendar.HOUR),
+                        date.get(GregorianCalendar.MINUTE),
+                        date.get(GregorianCalendar.SECOND),
+                        conta.getNumero(),
+                        conta.getStatus(),
+                        valor,
+                        1
+                    );
+                    operacoes.add(op);
+                    operacoesConta.add(op);
+                    atualizaTela();
+                }
             } catch (NumberFormatException ex) {
                 Alert alert = new Alert(AlertType.WARNING);
                 alert.setTitle("Valor inválido !!");
@@ -171,5 +195,4 @@ public class TelaOperacoes {
         lLimite.setText("Limite retirada diaria: " + conta.getLimRetiradaDiaria());
         lCategoria.setText("Categoria: " + conta.getStrStatus());
     }
-
 }
