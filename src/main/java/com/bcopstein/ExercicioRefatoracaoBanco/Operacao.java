@@ -1,8 +1,15 @@
 package com.bcopstein.ExercicioRefatoracaoBanco;
+
+import java.util.ArrayList;
+import java.util.List;
+// talvez tenha que ter um atributo para a classe Conta pois tenho que ter um filtro pra trazer somente 
+//as operacoes de uma conta apenas.
 public class Operacao {
+
 	public final int CREDITO = 0;
 	public final int DEBITO = 1;
-    
+	private Persistencia persistencia;
+	private final List<Operacao> operacoes;
 	private int dia;
     private int mes;
     private int ano;
@@ -27,6 +34,11 @@ public class Operacao {
 		this.statusConta = statusConta;
 		this.valorOperacao = valorOperacao;
 		this.tipoOperacao = tipoOperacao;
+		this.operacoes = this.persistencia.loadOperacoes();
+	}
+	//Segundo contrutor que será chamado na interface
+	public Operacao() {
+		this.operacoes = this.persistencia.loadOperacoes();
 	}
 
 	public int getDia() {
@@ -67,6 +79,29 @@ public class Operacao {
 
 	public int getTipoOperacao() {
 		return tipoOperacao;
+	}
+	//talvez o custo dessa operação seja muito grande rever pois toda vez que dou get pego e vou no "Banco busca"
+	public List<Operacao> getOperacoes() {
+		this.operacoes.addAll(this.persistencia.loadOperacoes());
+		return this.operacoes;
+	}
+
+	public List<Operacao> getOperacoesConta(int numeroConta) {
+		List<Operacao> operacoesConta = new ArrayList<>();
+
+		for (Operacao operacao: this.operacoes) {
+			if (operacao.getNumeroConta() == numeroConta) {
+				operacoesConta.add(operacao);
+			}
+		}
+		return operacoesConta;
+	}
+
+	public void AddOperacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
+	double valorOperacao, int tipoOperacao) {
+		Operacao op = new Operacao(dia, mes, ano, hora, minuto, segundo, numeroConta, statusConta, valorOperacao, tipoOperacao);
+		this.operacoes.add(op);
+		this.persistencia.saveOperacoes(operacoes);
 	}
     
 	@Override
