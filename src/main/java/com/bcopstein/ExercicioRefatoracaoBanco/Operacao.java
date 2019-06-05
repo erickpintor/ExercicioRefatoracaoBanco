@@ -22,7 +22,7 @@ public class Operacao {
     private int tipoOperacao;
     
 	public Operacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
-			double valorOperacao, int tipoOperacao) {
+			double valorOperacao, int tipoOperacao, Persistencia persi) {
 		super();
 		this.dia = dia;
 		this.mes = mes;
@@ -34,11 +34,29 @@ public class Operacao {
 		this.statusConta = statusConta;
 		this.valorOperacao = valorOperacao;
 		this.tipoOperacao = tipoOperacao;
-		this.operacoes = this.persistencia.loadOperacoes();
+		this.persistencia = persi;
+		this.operacoes = persistencia.loadOperacoes();
 	}
 	//Segundo contrutor que será chamado na interface
-	public Operacao() {
-		this.operacoes = this.persistencia.loadOperacoes();
+	public Operacao(Persistencia persi) {
+		this.operacoes = persi.loadOperacoes();
+	}
+
+	private Operacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
+		double valorOperacao, int tipoOperacao) {
+		super();
+		this.dia = dia;
+		this.mes = mes;
+		this.ano = ano;
+		this.hora = hora;
+		this.minuto = minuto;
+		this.segundo = segundo;
+		this.numeroConta = numeroConta;
+		this.statusConta = statusConta;
+		this.valorOperacao = valorOperacao;
+		this.tipoOperacao = tipoOperacao;
+		this.persistencia = null;
+		this.operacoes = null;
 	}
 
 	public int getDia() {
@@ -82,11 +100,16 @@ public class Operacao {
 	}
 	//talvez o custo dessa operação seja muito grande rever pois toda vez que dou get pego e vou no "Banco busca"
 	public List<Operacao> getOperacoes() {
-		this.operacoes.addAll(this.persistencia.loadOperacoes());
+		if(this.operacoes.isEmpty()){
+			this.operacoes.addAll(this.persistencia.loadOperacoes());
+		}
 		return this.operacoes;
 	}
 
 	public List<Operacao> getOperacoesConta(int numeroConta) {
+		if (this.operacoes.size() == 0) {
+			this.operacoes.addAll(this.persistencia.loadOperacoes());
+		}
 		List<Operacao> operacoesConta = new ArrayList<>();
 
 		for (Operacao operacao: this.operacoes) {
@@ -101,7 +124,10 @@ public class Operacao {
 	double valorOperacao, int tipoOperacao) {
 		Operacao op = new Operacao(dia, mes, ano, hora, minuto, segundo, numeroConta, statusConta, valorOperacao, tipoOperacao);
 		this.operacoes.add(op);
-		this.persistencia.saveOperacoes(operacoes);
+	}
+
+	public void saveOperacoes() {
+		this.persistencia.saveOperacoes(this.operacoes);
 	}
     
 	@Override
