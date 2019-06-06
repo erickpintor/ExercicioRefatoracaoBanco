@@ -16,8 +16,8 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bcopstein.ExercicioRefatoracaoBanco.Operacao;
 import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Operacao;
 
 
 
@@ -27,36 +27,44 @@ public class OperacaoTest {
     @BeforeEach
     public void setUp() throws Exception {
         List<Operacao> operacoes1 = new ArrayList<>();
-        Operacao operacao = new Operacao(04, 06, 2019, 13, 20, 30, 8888, 1, 200, 1, mockPersistencia);
+        Operacao operacao = new Operacao(04, 06, 2019, 13, 20, 30, 8888, 1, 200, 1);
         operacoes1.add(operacao);
         when(mockPersistencia.loadOperacoes()).thenReturn(operacoes1);        
     }
  
     @Test
-    public void getOperacoesTest() {
-        Operacao operacao = new Operacao(mockPersistencia);
+    public void AddAllOperacoesTest() {
+        Operacao operacao = new Operacao();
+        operacao.addAllOperacoes(mockPersistencia.loadOperacoes());
         assertEquals(1, operacao.getOperacoes().size());
     }
 
     @Test
+    public void getOperacoesTest() {
+        Operacao operacao = new Operacao();
+        assertEquals(0, operacao.getOperacoes().size());
+    }
+
+    @Test
     public void getOperacoesContaTest() {
-        Operacao operacao = new Operacao(mockPersistencia);
+        Operacao operacao = new Operacao();
+        operacao.AddOperacao(04, 06, 2019, 13, 20, 30, 8888, 1, 200, 1);
         List<Operacao> opConta = operacao.getOperacoesConta(8888); 
         assertEquals(1, opConta.size());
     }
 
     @Test
     public void getOperacoesContaInvalidTest() {
-        Operacao operacao = new Operacao(mockPersistencia);
+        Operacao operacao = new Operacao();
         List<Operacao> opConta = operacao.getOperacoesConta(888); 
         assertEquals(true, opConta.isEmpty());
     }
 
     @Test
     public void AddOperacoesTest() {
-        Operacao operacao = new Operacao(mockPersistencia);
+        Operacao operacao = new Operacao();
         operacao.AddOperacao(04, 06, 2019, 13, 20, 30, 8888, 1, 200, 1);
-        assertEquals(2, operacao.getOperacoes().size());
+        assertEquals(1, operacao.getOperacoes().size());
     }
 
 }
