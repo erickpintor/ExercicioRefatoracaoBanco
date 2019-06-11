@@ -7,7 +7,6 @@ public class Operacao {
 
 	public final int CREDITO = 0;
 	public final int DEBITO = 1;
-	private final List<Operacao> operacoes;
 	private int dia;
     private int mes;
     private int ano;
@@ -32,11 +31,6 @@ public class Operacao {
 		this.statusConta = statusConta;
 		this.valorOperacao = valorOperacao;
 		this.tipoOperacao = tipoOperacao;
-		this.operacoes = new ArrayList<>();
-	}
-	//Segundo contrutor que será chamado na interface
-	public Operacao() {
-		this.operacoes = new ArrayList<>();
 	}
 
 	public int getDia() {
@@ -78,31 +72,7 @@ public class Operacao {
 	public int getTipoOperacao() {
 		return tipoOperacao;
 	}
-	//talvez o custo dessa operação seja muito grande rever pois toda vez que dou get pego e vou no "Banco busca"
-	public List<Operacao> getOperacoes() {
-		return this.operacoes;
-	}
 
-	public List<Operacao> getOperacoesConta(int numeroConta) {
-		List<Operacao> operacoesConta = new ArrayList<>();
-		for (Operacao operacao: this.operacoes) {
-			if (operacao.getNumeroConta() == numeroConta) {
-				operacoesConta.add(operacao);
-			}
-		}
-		return operacoesConta;
-	}
-
-	public void AddOperacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
-	double valorOperacao, int tipoOperacao) {
-		Operacao op = new Operacao(dia, mes, ano, hora, minuto, segundo, numeroConta, statusConta, valorOperacao, tipoOperacao);
-		this.operacoes.add(op);
-	}
-	
-	public void addAllOperacoes (List<Operacao> op) {
-		this.operacoes.addAll(op);
-	}
-    
 	@Override
 	public String toString() {
 		String tipo = "<C>";
