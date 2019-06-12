@@ -11,41 +11,46 @@ public class OperacaoController {
     private Persistencia persistencia;
     private static final int DIAS_NO_MES = 30;
 
-    public OperacaoController() {
-        persistencia = new Persistencia();
+    public OperacaoController(Persistencia persistencia) {
+        this.persistencia = persistencia;
         this.operacoes = persistencia.loadOperacoes();
     }
 
     public void saveOperacoes() {
         persistencia.saveOperacoes(this.operacoes);
     }
-    
-    public List<Operacao> getOperacoesConta(int numeroConta) {
-		List<Operacao> operacoesConta = new ArrayList<>();
-		for (Operacao operacao: this.operacoes) {
-			if (operacao.getNumeroConta() == numeroConta) {
-				operacoesConta.add(operacao);
-			}
-		}
+
+    public List<Operacao> getOperacoesConta(int numeroConta) throws OperacaoException {
+        List<Operacao> operacoesConta = new ArrayList<>();
+        for (Operacao operacao : this.operacoes) {
+            if (operacao.getNumeroConta() == numeroConta) {
+                operacoesConta.add(operacao);
+            }
+        }
+        if (operacoesConta.isEmpty()) {
+            throw new OperacaoException();
+        } 
+
 		return operacoesConta;
     }
 
-    public Double valorDiarioCredito(int numeroConta, int dia, int mes) {
+    public Double valorDiarioDebito(int numeroConta, int dia, int mes, int ano) throws OperacaoException {
         List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
         Double totalDebitoConta = 0.0;
         for(Operacao operacaoConta: operacoesConta){
-            if (operacaoConta.getMes() == mes) {
-                if (operacaoConta.getDia() == dia) {
-                    if(operacaoConta.getTipoOperacao() == 1){
-                        totalDebitoConta+= operacaoConta.getValorOperacao();
-                    } 
+            if (operacaoConta.getAno() == ano) {}
+                if (operacaoConta.getMes() == mes) {
+                    if (operacaoConta.getDia() == dia) {
+                        if(operacaoConta.getTipoOperacao() == 1){
+                            totalDebitoConta+= operacaoConta.getValorOperacao();
+                        } 
+                    }
                 }
             }
+            return totalDebitoConta;
         }
-        return totalDebitoConta;
-    }
-
-    public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano) {
+    
+    public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano) throws OperacaoException {
         int totalCredito = 0;
         int totalDebito = 0;
         int quantidadeDebito = 0;
@@ -69,7 +74,7 @@ public class OperacaoController {
         return contaEstatistica;
     }
 
-    private Double saldoMedioMes(int numeroConta, int mes) {
+    private Double saldoMedioMes(int numeroConta, int mes) throws OperacaoException {
 
         List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
         double[] saldosMes = new double[DIAS_NO_MES];
