@@ -50,7 +50,7 @@ public class OperacaoController {
             return totalDebitoConta;
         }
     
-    public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano) throws OperacaoException {
+    public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano, String nome) throws OperacaoException {
         int totalCredito = 0;
         int totalDebito = 0;
         int quantidadeDebito = 0;
@@ -70,7 +70,7 @@ public class OperacaoController {
             }
         }
 
-        ContaEstatistica contaEstatistica = new ContaEstatistica(totalCredito, totalDebito, quantidadeDebito, quantidadeCredito, saldoMedioMes(numeroConta, mes));
+        ContaEstatistica contaEstatistica = new ContaEstatistica(totalCredito, totalDebito, quantidadeDebito, quantidadeCredito, saldoMedioMes(numeroConta, mes), nome, numeroConta);
         return contaEstatistica;
     }
 

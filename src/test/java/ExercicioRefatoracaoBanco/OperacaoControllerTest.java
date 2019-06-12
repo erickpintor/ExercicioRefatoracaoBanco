@@ -56,7 +56,7 @@ public class OperacaoControllerTest {
     @Test
     public void contaEstatisticaSaldoMedioTest() throws OperacaoException {
         OperacaoController operacaoController = new OperacaoController((mockPersistencia));
-        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019); 
+        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019, "franscisco"); 
         double valor = contaEstatistica.getSaldoMedioMes();
         assertEquals(300,valor);
     }
@@ -64,7 +64,7 @@ public class OperacaoControllerTest {
     @Test
     public void contaEstatisticaQuantidadeDebitoTest() throws OperacaoException {
         OperacaoController operacaoController = new OperacaoController((mockPersistencia));
-        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019); 
+        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019, "francisco"); 
         double valor = contaEstatistica.getquantidadeDebito();
         assertEquals(1,valor);
     }
@@ -72,7 +72,7 @@ public class OperacaoControllerTest {
     @Test
     public void contaEstatisticaValorDebitoTest() throws OperacaoException {
         OperacaoController operacaoController = new OperacaoController((mockPersistencia));
-        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019); 
+        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019, "francisco"); 
         double valor = contaEstatistica.getTotalDebito();
         assertEquals(200,valor);
     }
@@ -80,7 +80,7 @@ public class OperacaoControllerTest {
     @Test
     public void contaEstatisticaQuantidadeCreditoTest() throws OperacaoException {
         OperacaoController operacaoController = new OperacaoController((mockPersistencia));
-        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019); 
+        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019, "francisco"); 
         double valor = contaEstatistica.getQuantidadelCredito();
         assertEquals(1,valor);
     }
@@ -88,7 +88,7 @@ public class OperacaoControllerTest {
     @Test
     public void contaEstatisticaValorCreditoTest() throws OperacaoException {
         OperacaoController operacaoController = new OperacaoController((mockPersistencia));
-        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019); 
+        ContaEstatistica contaEstatistica = operacaoController.EstatisticaConta(8888, 06, 2019, "francisco"); 
         int valor = contaEstatistica.getTotalCredito();
         assertEquals(500,valor);
     }
