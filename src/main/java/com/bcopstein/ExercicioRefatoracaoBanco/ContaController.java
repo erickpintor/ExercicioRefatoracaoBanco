@@ -6,12 +6,8 @@ public class ContaController {
             this.contas.put(c.getNumero(), c);
         }
     }
-
-    public void deposito(double valor, int id) {
-        contas.get(id).deposito(valor);
-    }
-
-    public void retirada(double valor, int conta) {
-        contas.get(id).retirada(valor)
+    
+    public Conta getConta(int numero) {
+        return contas.get(numero);
     }
 }
