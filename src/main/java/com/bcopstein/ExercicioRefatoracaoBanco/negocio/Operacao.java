@@ -1,8 +1,5 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Operacao {
 
 	public final int CREDITO = 0;

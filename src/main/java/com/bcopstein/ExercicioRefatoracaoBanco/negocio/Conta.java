@@ -1,7 +1,5 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 
-import java.util.GregorianCalendar;
-
 public class Conta {
 	public final int SILVER = 0;
 	public final int GOLD = 1;
@@ -15,7 +13,6 @@ public class Conta {
 	private String correntista;
 	private double saldo;
 	private int status;
-	private double retiradaDia;
 
 	public Conta(int umNumero, String umNome) {
 		numero = umNumero;

@@ -3,21 +3,13 @@ package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
-
 public class OperacaoController {
 
     private List<Operacao> operacoes;
-    private Persistencia persistencia;
     private static final int DIAS_NO_MES = 30;
 
-    public OperacaoController(Persistencia persistencia) {
-        this.persistencia = persistencia;
-        this.operacoes = persistencia.loadOperacoes();
-    }
-
-    public void saveOperacoes() {
-        persistencia.saveOperacoes(this.operacoes);
+    public OperacaoController(List<Operacao> operacoes) {
+        this.operacoes = operacoes;
     }
 
     public List<Operacao> getOperacoesConta(int numeroConta) throws OperacaoException {
@@ -38,17 +30,18 @@ public class OperacaoController {
         List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
         Double totalDebitoConta = 0.0;
         for(Operacao operacaoConta: operacoesConta){
-            if (operacaoConta.getAno() == ano) {}
+            if (operacaoConta.getAno() == ano) {
                 if (operacaoConta.getMes() == mes) {
                     if (operacaoConta.getDia() == dia) {
                         if(operacaoConta.getTipoOperacao() == 1){
                             totalDebitoConta+= operacaoConta.getValorOperacao();
-                        } 
+                        }
                     }
                 }
             }
-            return totalDebitoConta;
         }
+        return totalDebitoConta;
+    }
     
     public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano, String nome) throws OperacaoException {
         int totalCredito = 0;
@@ -101,7 +94,7 @@ public class OperacaoController {
 
         return saldoTotal;
     }
-	public void AddOperacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
+	public void addOperacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
 	double valorOperacao, int tipoOperacao) {
 		Operacao op = new Operacao(dia, mes, ano, hora, minuto, segundo, numeroConta, statusConta, valorOperacao, tipoOperacao);
 		this.operacoes.add(op);

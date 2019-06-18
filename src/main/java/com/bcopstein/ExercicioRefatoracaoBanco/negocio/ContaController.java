@@ -2,15 +2,11 @@ package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 
 import java.util.Map;
 
-import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
-
 public class ContaController {
     private Map<Integer, Conta> contas;
-    private Persistencia persistencia;
 
-    public ContaController(Persistencia persistencia) {
-        this.persistencia = persistencia;
-        this.contas = persistencia.loadContas();
+    public ContaController(Map<Integer, Conta> contas) {
+        this.contas = contas;
     }
 
     public Conta getConta(int numeroConta) throws ContaException {
@@ -27,12 +23,8 @@ public class ContaController {
         conta.deposito(valor);
     }
 
-    public void DebitoConta(int numeroConta, double valor) throws ContaException {
+    public void debitoConta(int numeroConta, double valor) throws ContaException {
         Conta conta = getConta(numeroConta);
         conta.retirada(valor);
-    }
-
-    public void saveConta() {
-        this.persistencia.saveContas(contas.values());
     }
 }
