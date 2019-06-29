@@ -1,6 +1,5 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 
-
 public class ContaEstatistica {
     private String nomeCorrentista;
     private int numeroConta;
@@ -25,24 +24,12 @@ public class ContaEstatistica {
         return this.numeroConta;
     }
 
-    public void setNumeroConta(int numeroConta){
-         this.numeroConta = numeroConta;
-    }
-
     public String getNomeCorrentista(){
         return this.nomeCorrentista;
-    }
-
-    public void setNomeCorrentista(String nomeCorrentista){
-         this.nomeCorrentista = nomeCorrentista;
     }
     
     public int getTotalCredito(){
         return this.totalCredito;
-    }
-
-    public void setTotalCredito(int totalCredito){
-         this.totalCredito = totalCredito;
     }
 
     public int getTotalDebito(){
@@ -57,23 +44,11 @@ public class ContaEstatistica {
         return this.quantidadeDebito;
     }
 
-    public void setQuantidadeDebito(int quantidadeDebito){
-        this.quantidadeDebito = quantidadeDebito;
-    }
-
     public int getQuantidadelCredito(){
         return this.quantidadeCredito;
     }
 
-    public void setQuantidadeCredito(int quantidadeCredito){
-        this.quantidadeCredito = quantidadeCredito;
-    }
-
     public Double getSaldoMedioMes(){
         return this.saldoMedioMes;
-    }
-
-    public void setSaldoMedioMes(Double saldoMedioMes){
-        this.saldoMedioMes = saldoMedioMes;
     }
 }

@@ -16,7 +16,6 @@ import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.ContaEstatistica;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Operacao;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.OperacaoController;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.OperacaoException;
 
 public class OperacaoControllerTest {
     private Persistencia mockPersistencia = mock(Persistencia.class);
