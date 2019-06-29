@@ -3,42 +3,40 @@ package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
-
 public class OperacaoController {
 
     private List<Operacao> operacoes;
-    private Persistencia persistencia;
     private static final int DIAS_NO_MES = 30;
 
-    public OperacaoController(Persistencia persistencia) {
-        this.persistencia = persistencia;
-        this.operacoes = persistencia.loadOperacoes();
+    public OperacaoController(List<Operacao> listaOperacoes) {
+        this.operacoes = listaOperacoes;
     }
 
-    public void saveOperacoes() {
-        persistencia.saveOperacoes(this.operacoes);
+    public List<Operacao> getOperacoes() {
+        return this.operacoes;
     }
 
-    public List<Operacao> getOperacoesConta(int numeroConta) throws OperacaoException {
+    public List<Operacao> getOperacoesConta(int numeroConta) {
         List<Operacao> operacoesConta = new ArrayList<>();
         for (Operacao operacao : this.operacoes) {
             if (operacao.getNumeroConta() == numeroConta) {
                 operacoesConta.add(operacao);
             }
         }
+
         if (operacoesConta.isEmpty()) {
-            throw new OperacaoException();
+            return null;
         } 
 
 		return operacoesConta;
     }
 
-    public Double valorDiarioDebito(int numeroConta, int dia, int mes, int ano) throws OperacaoException {
+    public Double valorDiarioDebito(int numeroConta, int dia, int mes, int ano) {
         List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
         Double totalDebitoConta = 0.0;
+        
         for(Operacao operacaoConta: operacoesConta){
-            if (operacaoConta.getAno() == ano) {}
+            if (operacaoConta.getAno() == ano) {
                 if (operacaoConta.getMes() == mes) {
                     if (operacaoConta.getDia() == dia) {
                         if(operacaoConta.getTipoOperacao() == 1){
@@ -47,10 +45,11 @@ public class OperacaoController {
                     }
                 }
             }
+        }
             return totalDebitoConta;
         }
     
-    public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano, String nome) throws OperacaoException {
+    public ContaEstatistica EstatisticaConta(int numeroConta, int mes, int ano, String nome) {
         int totalCredito = 0;
         int totalDebito = 0;
         int quantidadeDebito = 0;
@@ -74,7 +73,7 @@ public class OperacaoController {
         return contaEstatistica;
     }
 
-    private Double saldoMedioMes(int numeroConta, int mes) throws OperacaoException {
+    private Double saldoMedioMes(int numeroConta, int mes) {
 
         List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
         double[] saldosMes = new double[DIAS_NO_MES];
@@ -91,7 +90,6 @@ public class OperacaoController {
                 saldosMes[operacao.getDia() - 1] = saldoTotal;
             }
         }
-
         // Repete o saldo anterior em dias sem operações
         for (int i = 1; i < saldosMes.length; i++) {
             if (saldosMes[i] == 0) {

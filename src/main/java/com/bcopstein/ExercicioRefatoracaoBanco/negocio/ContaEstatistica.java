@@ -53,7 +53,7 @@ public class ContaEstatistica {
         this.totalDebito = totalDebito;
     }
 
-    public int getquantidadeDebito(){
+    public int getQuantidadeDebito(){
         return this.quantidadeDebito;
     }
 

@@ -14,6 +14,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Conta;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Operacao;
+
 public class Persistencia {
 
     private final String NomeBDContas = "BDContasBNG.txt";

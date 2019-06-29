@@ -36,41 +36,37 @@ public class ContaControllerTest {
     }
 
     @Test
-    public void getContaTest() throws ContaException {
-        ContaController ContaController = new ContaController((mockPersistencia));
+    public void getContaTest() {
+        Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
+        ContaController ContaController = new ContaController((contasUsuarios));
         Conta conta = ContaController.getConta(1995);
         assertTrue(conta != null);
     }
 
-    @Test
-    public void getContaInvalidTest() {
-        ContaController ContaController = new ContaController((mockPersistencia));
-        assertThrows(ContaException.class, () -> {
-            ContaController.getConta(199);
-        });
-    }
+  //  @Test
+ //   public void getContaInvalidTest() {
+ //       Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
+ //       ContaController ContaController = new ContaController((contasUsuarios));
+  //      assertThrows(ContaException.class, () -> {
+  //          ContaController.getConta(199);
+  //      });
+  //  }
 
     @Test
-    public void creditoContaTest() throws ContaException {
-        ContaController ContaController = new ContaController((mockPersistencia));
+    public void creditoContaTest() {
+        Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
+        ContaController ContaController = new ContaController((contasUsuarios));
         Conta conta = ContaController.getConta(1995);
         conta.deposito(100);
         assertEquals(5200, conta.getSaldo());
     }
 
     @Test
-    public void debitoContaValidoTest() throws ContaException {
-        ContaController ContaController = new ContaController((mockPersistencia));
+    public void debitoContaValidoTest() {
+        Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
+        ContaController ContaController = new ContaController((contasUsuarios));
         Conta conta = ContaController.getConta(1995);
         conta.retirada(100);
         assertEquals(5000, conta.getSaldo());
-    }
-
-    @Test
-    public void debitoContaInvalidoTest() throws ContaException {
-        ContaController contaController = new ContaController((mockPersistencia));
-        contaController.DebitoConta(1995, 5200);
-        Conta conta = contaController.getConta(1995);
-        assertEquals(5100, conta.getSaldo());
     }
 }

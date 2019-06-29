@@ -16,29 +16,25 @@ import javafx.stage.Stage;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.stream.Collectors;
+
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
 
 public class TelaOperacoes {
     private final Stage mainStage;
     private final Scene cenaEntrada;
-    private final List<Operacao> operacoes;
-    private final Conta conta;
-    private int diaDeOperacao;
-    private double retiradaDia;
+    private Fachada fachada = new Fachada();
+    private int nroConta;
     GregorianCalendar gc = new GregorianCalendar();
     private final TextField tfValorOperacao = new TextField();
     private final TextField tfSaldo = new TextField();
     private final Label lCategoria = new Label();
     private final Label lLimite = new Label();
 
-    public TelaOperacoes(Stage mainStage, Scene telaEntrada, Conta conta, List<Operacao> operacoes) {
+    public TelaOperacoes(Stage mainStage, Scene telaEntrada, int nroConta) {
         this.mainStage = mainStage;
         this.cenaEntrada = telaEntrada;
-        this.conta = conta;
-        this.operacoes = operacoes;
-        //Variavel já pega o dia atual para as operacoes
-        this.diaDeOperacao = gc.get(Calendar.DAY_OF_MONTH) + 1;
+        this.nroConta = nroConta;
     }
 
     public Scene getTelaOperacoes() {
@@ -50,7 +46,9 @@ public class TelaOperacoes {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Text scenetitle = new Text(conta.getNumero() + " : " + conta.getCorrentista());
+        Text scenetitle;
+            scenetitle = new Text(fachada.getContaCliente(this.nroConta).getNumero() + " : "
+                    + fachada.getContaCliente(this.nroConta).getCorrentista());
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
         grid.add(lCategoria, 0, 1);
@@ -59,18 +57,16 @@ public class TelaOperacoes {
         Label tit = new Label("Ultimos movimentos");
         grid.add(tit, 0, 3);
 
-        // Seleciona apenas o extrato da conta atual
-        ObservableList<Operacao> operacoesConta =
-            FXCollections.observableArrayList(
-                operacoes
-                    .stream()
-                    .filter(op -> op.getNumeroConta() == this.conta.getNumero())
-                    .collect(Collectors.toList())
-            );
+        ObservableList operacoesConta =
+        FXCollections.observableArrayList(
+            fachada.getOperacoesConta(this.nroConta)
+            .stream()
+            .collect(Collectors.toList())
+        );
 
-        ListView<Operacao> extrato = new ListView<>(operacoesConta);
-        extrato.setPrefHeight(140);
-        grid.add(extrato, 0, 4);
+    ListView extrato = new ListView<>(operacoesConta);
+    extrato.setPrefHeight(140);
+    grid.add(extrato, 0, 4);
 
         HBox valSaldo = new HBox(20);
         valSaldo.setAlignment(Pos.BOTTOM_LEFT);
@@ -86,46 +82,26 @@ public class TelaOperacoes {
 
         Button btnCredito = new Button("Credito");
         Button btnDebito = new Button("Debito");
-		Button btnVoltar = new Button("Voltar");
-		Button btnEstatistica = new Button("Estatistica");
+        Button btnVoltar = new Button("Voltar");
+        Button btnEstatistica = new Button("Estatistica");
         HBox hbBtn = new HBox(20);
         hbBtn.setAlignment(Pos.TOP_CENTER);
         hbBtn.getChildren().add(btnCredito);
         hbBtn.getChildren().add(btnDebito);
-		hbBtn.getChildren().add(btnVoltar);
-		hbBtn.getChildren().add(btnEstatistica);
+        hbBtn.getChildren().add(btnVoltar);
+        hbBtn.getChildren().add(btnEstatistica);
         grid.add(hbBtn, 1, 2);
-        btnEstatistica.setOnAction(e->{
-			//aqui eu irei passar o mes atual e com o metodo já fazer os calculos necessarios
-			TelaEstatistica toper = new TelaEstatistica(mainStage, cenaEntrada,conta,operacoes);
-			Scene scene = toper.getTelaEstatistica();
-			mainStage.setScene(scene);
-		});
+        btnEstatistica.setOnAction(e -> {
+             TelaEstatistica toper = new TelaEstatistica(mainStage,cenaEntrada, this.nroConta);
+             Scene scene = toper.getTelaEstatistica();
+             mainStage.setScene(scene);
+        });
 
         btnCredito.setOnAction(e -> {
-            try {
-                double valor = Integer.parseInt(tfValorOperacao.getText());
-                if (valor < 0.0) {
-                    throw new NumberFormatException("Valor invalido");
-                }
-                conta.deposito(valor);
-                GregorianCalendar date = new GregorianCalendar();
-                Operacao op = new Operacao(
-                    date.get(GregorianCalendar.DAY_OF_MONTH),
-                    date.get(GregorianCalendar.MONTH) + 1,
-                    date.get(GregorianCalendar.YEAR),
-                    date.get(GregorianCalendar.HOUR),
-                    date.get(GregorianCalendar.MINUTE),
-                    date.get(GregorianCalendar.SECOND),
-                    conta.getNumero(),
-                    conta.getStatus(),
-                    valor,
-                    0
-                );
-                operacoes.add(op);
-                operacoesConta.add(op);
+            double valor = Integer.parseInt(tfValorOperacao.getText());
+            if (fachada.creditoConta(this.nroConta, valor)) {
                 atualizaTela();
-            } catch (NumberFormatException ex) {
+            } else {
                 Alert alert = new Alert(AlertType.WARNING);
                 alert.setTitle("Valor inválido !!");
                 alert.setHeaderText(null);
@@ -135,48 +111,11 @@ public class TelaOperacoes {
         });
 
         btnDebito.setOnAction(e -> {
-            try {
-                double valor = Integer.parseInt(tfValorOperacao.getText());
-                if (valor < 0.0 || valor > conta.getSaldo()) {
-                    throw new NumberFormatException("Saldo insuficiente");
-                }
-                
-                GregorianCalendar date = new GregorianCalendar(); 
-                int dia =  date.get(GregorianCalendar.DAY_OF_MONTH);
-                double valorTotalDia = 0;
-                for (Operacao op: operacoesConta) {
-                    if (op.getDia() == dia) {
-                        if (op.getTipoOperacao() == 1) {
-                            valorTotalDia += op.getValorOperacao();
-                        }
-                    }
-                }
-                if (valorTotalDia >= conta.getLimRetiradaDiaria()) {
-                    Alert alert = new Alert(AlertType.WARNING);
-                    alert.setTitle("Limite atingido !!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Limite diário para debito atingido!");
-                    alert.showAndWait();
-                } else {
-                    conta.retirada(valor);
+            double valor = Integer.parseInt(tfValorOperacao.getText());
 
-                    Operacao op = new Operacao(
-                        date.get(GregorianCalendar.DAY_OF_MONTH),
-                        date.get(GregorianCalendar.MONTH) + 1,
-                        date.get(GregorianCalendar.YEAR),
-                        date.get(GregorianCalendar.HOUR),
-                        date.get(GregorianCalendar.MINUTE),
-                        date.get(GregorianCalendar.SECOND),
-                        conta.getNumero(),
-                        conta.getStatus(),
-                        valor,
-                        1
-                    );
-                    operacoes.add(op);
-                    operacoesConta.add(op);
-                    atualizaTela();
-                }
-            } catch (NumberFormatException ex) {
+            if (fachada.debitoConta(this.nroConta, valor)) {
+                atualizaTela();
+            } else {
                 Alert alert = new Alert(AlertType.WARNING);
                 alert.setTitle("Valor inválido !!");
                 alert.setHeaderText(null);
@@ -191,8 +130,8 @@ public class TelaOperacoes {
     }
 
     private void atualizaTela() {
-        tfSaldo.setText("" + conta.getSaldo());
-        lLimite.setText("Limite retirada diaria: " + conta.getLimRetiradaDiaria());
-        lCategoria.setText("Categoria: " + conta.getStrStatus());
+        tfSaldo.setText("" + fachada.getContaCliente(this.nroConta).getSaldo());
+        lLimite.setText("Limite retirada diaria: " + fachada.getContaCliente(this.nroConta).getLimRetiradaDiaria());
+        lCategoria.setText("Categoria: " + fachada.getContaCliente(this.nroConta).getStrStatus());
     }
 }

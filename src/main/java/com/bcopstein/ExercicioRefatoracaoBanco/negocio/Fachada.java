@@ -13,83 +13,75 @@ public class Fachada {
 
     public Fachada() {
         this.persistencia = new Persistencia();
-        this.operacoes = new OperacaoController(this.persistencia);
-        this.conta = new ContaController(persistencia);
+        this.operacoes = new OperacaoController(this.persistencia.loadOperacoes());
+        this.conta = new ContaController(this.persistencia.loadContas());
         this.gc = new GregorianCalendar();
     }
 
     public Conta getContaCliente(int numeroConta) {
-        try {
-            return this.conta.getConta(numeroConta);
-
-        } catch (ContaException e) {
-
-            e.printStackTrace();
-        }
-
-        return null;
+        return this.conta.getConta(numeroConta);
     }
 
-    public void creditoConta(int numeroConta, int valor) {
+    public boolean creditoConta(int numeroConta, Double valor) {
         Conta contaAtual;
-        try {
-            contaAtual = this.conta.getConta(numeroConta);
-            contaAtual.deposito(valor);
-            this.operacoes.AddOperacao(gc.get(GregorianCalendar.DAY_OF_MONTH), gc.get(GregorianCalendar.MONTH) + 1,
-                    gc.get(GregorianCalendar.YEAR), gc.get(GregorianCalendar.HOUR), gc.get(GregorianCalendar.MINUTE),
-                    gc.get(GregorianCalendar.SECOND), contaAtual.getNumero(), contaAtual.getStatus(), valor, 0);
-        } catch (ContaException e) {
-            e.printStackTrace();
+        if (valor < 0) {
+            return false;
         }
+        if (valor == null) {
+            return false;
+        }
+        contaAtual = this.conta.getConta(numeroConta);
+        contaAtual.deposito(valor);
+        this.operacoes.AddOperacao(gc.get(GregorianCalendar.DAY_OF_MONTH), gc.get(GregorianCalendar.MONTH) + 1,
+                gc.get(GregorianCalendar.YEAR), gc.get(GregorianCalendar.HOUR), gc.get(GregorianCalendar.MINUTE),
+                gc.get(GregorianCalendar.SECOND), contaAtual.getNumero(), contaAtual.getStatus(), valor, 0);
+        return true;
     }
 
-    public void debitoConta(int numeroConta, int valor) {
+    public boolean debitoConta(int numeroConta, Double valor) {
         Conta contaAtual;
-        try {
-            contaAtual = this.conta.getConta(numeroConta);
-            double valorDiario = this.operacoes.valorDiarioDebito(numeroConta, gc.get(GregorianCalendar.DAY_OF_MONTH),
-                    gc.get(GregorianCalendar.MONTH) + 1, gc.get(GregorianCalendar.YEAR));
+        if (valor < 0) {
+            return false;
+        }
 
-            if (contaAtual.getLimRetiradaDiaria() > valorDiario) {
-                // talvez tenha que lançar uma excessao e tratar ela aqui ou algo assim talvez
-                // fazer com booleano debito e credito
-                return;
-            }
+        if (valor == null) {
+            return false;
+        }
 
+        contaAtual = this.conta.getConta(numeroConta);
+        double valorDiario = this.operacoes.valorDiarioDebito(numeroConta, gc.get(GregorianCalendar.DAY_OF_MONTH),
+                gc.get(GregorianCalendar.MONTH) + 1, gc.get(GregorianCalendar.YEAR));
+                
+        if (contaAtual.getLimRetiradaDiaria() < valorDiario) {
+            return false;
+        } else {
             contaAtual.retirada(valor);
             this.operacoes.AddOperacao(gc.get(GregorianCalendar.DAY_OF_MONTH), gc.get(GregorianCalendar.MONTH) + 1,
                     gc.get(GregorianCalendar.YEAR), gc.get(GregorianCalendar.HOUR), gc.get(GregorianCalendar.MINUTE),
                     gc.get(GregorianCalendar.SECOND), contaAtual.getNumero(), contaAtual.getStatus(), valor, 1);
-        } catch (ContaException | OperacaoException e) {
-            e.printStackTrace();
+            return true;
         }
+
     }
 
     public ContaEstatistica getEstatisticaConta(int numeroConta, int mes, int ano) {
-        try {
-           Conta contaAtual = this.conta.getConta(numeroConta);
-            return this.operacoes.EstatisticaConta(numeroConta, mes, ano,contaAtual.getCorrentista());
-        } catch (OperacaoException | ContaException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Conta contaAtual = this.conta.getConta(numeroConta);
+        return this.operacoes.EstatisticaConta(numeroConta, mes, ano, contaAtual.getCorrentista());
     }
 
     public List<Operacao> getOperacoesConta(int numero) {
-        try {
-            return operacoes.getOperacoesConta(numero);
-        } catch (OperacaoException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return operacoes.getOperacoesConta(numero);
     }
 
-    public void saveOperacoes() {
-        this.operacoes.saveOperacoes();
+    public boolean isConta(int numeroConta) {
+        return this.conta.isConta(numeroConta);
     }
 
     public void saveContas() {
-        this.conta.saveConta();
+        this.persistencia.saveContas(conta.getContas().values());
     }
 
+    public void saveOperacoes() {
+        this.persistencia.saveOperacoes(operacoes.getOperacoes());
+    }
 }
