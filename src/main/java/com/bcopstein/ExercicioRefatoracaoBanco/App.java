@@ -1,33 +1,27 @@
 package com.bcopstein.ExercicioRefatoracaoBanco;
 
-import java.util.List;
-import java.util.Map;
-
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class App extends Application {
 
-	private Map<Integer,Conta> contas;
-	private List<Operacao> operacoes;
+    private Fachada fachada = new Fachada();
 
     @Override
     public void start(Stage primaryStage) {
-        contas = Persistencia.getInstance().loadContas();
-    	operacoes = Persistencia.getInstance().loadOperacoes();
-    	
-    	primaryStage.setTitle("$$ Banco NOSSA GRANA $$");
-        TelaEntrada telaEntrada = new TelaEntrada(primaryStage, contas, operacoes);
+        primaryStage.setTitle("$$ Banco NOSSA GRANA $$");
+        TelaEntrada telaEntrada = new TelaEntrada(primaryStage);
         primaryStage.setScene(telaEntrada.getTelaEntrada());
         primaryStage.show();
     }
-    
+
     @Override
     public void stop() {
-        Persistencia.getInstance().saveContas(contas.values());
-        Persistencia.getInstance().saveOperacoes(operacoes);
+        fachada.saveOperacoes();
+        fachada.saveContas();
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }

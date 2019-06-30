@@ -1,4 +1,4 @@
-package com.bcopstein.ExercicioRefatoracaoBanco;
+package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 
 public class Operacao {
 
@@ -14,9 +14,9 @@ public class Operacao {
     private int statusConta;
     private double valorOperacao;
     private int tipoOperacao;
-
-	Operacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
-		double valorOperacao, int tipoOperacao) {
+    
+	public Operacao(int dia, int mes, int ano, int hora, int minuto, int segundo, int numeroConta, int statusConta,
+			double valorOperacao, int tipoOperacao) {
 		super();
 		this.dia = dia;
 		this.mes = mes;
@@ -69,7 +69,7 @@ public class Operacao {
 	public int getTipoOperacao() {
 		return tipoOperacao;
 	}
-    
+
 	@Override
 	public String toString() {
 		String tipo = "<C>";
