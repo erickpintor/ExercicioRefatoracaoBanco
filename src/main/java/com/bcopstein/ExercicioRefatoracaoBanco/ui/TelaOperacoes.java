@@ -1,5 +1,8 @@
-package com.bcopstein.ExercicioRefatoracaoBanco;
+package com.bcopstein.ExercicioRefatoracaoBanco.ui;
 
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.Conta;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.Operacao;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -14,30 +17,32 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.stream.Collectors;
+class TelaOperacoes {
 
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
-
-public class TelaOperacoes {
     private final Stage mainStage;
     private final Scene cenaEntrada;
-    private Fachada fachada = new Fachada();
-    private int nroConta;
-    GregorianCalendar gc = new GregorianCalendar();
+    private final Fachada fachada;
+    private final int nroConta;
+    private final Scene telaOperacoes;
+
     private final TextField tfValorOperacao = new TextField();
     private final TextField tfSaldo = new TextField();
     private final Label lCategoria = new Label();
     private final Label lLimite = new Label();
 
-    public TelaOperacoes(Stage mainStage, Scene telaEntrada, int nroConta) {
+    TelaOperacoes(Stage mainStage, Scene telaEntrada, Fachada fachada, int nroConta) {
         this.mainStage = mainStage;
         this.cenaEntrada = telaEntrada;
+        this.fachada = fachada;
         this.nroConta = nroConta;
+        this.telaOperacoes = criaTelaOperacoes();
     }
 
-    public Scene getTelaOperacoes() {
+    Scene getTelaOperacoes() {
+        return telaOperacoes;
+    }
+
+    private Scene criaTelaOperacoes() {
         tfSaldo.setDisable(true);
 
         GridPane grid = new GridPane();
@@ -46,9 +51,10 @@ public class TelaOperacoes {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
+        Conta conta = fachada.getContaCliente(this.nroConta);
+
         Text scenetitle;
-            scenetitle = new Text(fachada.getContaCliente(this.nroConta).getNumero() + " : "
-                    + fachada.getContaCliente(this.nroConta).getCorrentista());
+        scenetitle = new Text(conta.getNumero() + " : " + conta.getCorrentista());
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
         grid.add(lCategoria, 0, 1);
@@ -57,16 +63,14 @@ public class TelaOperacoes {
         Label tit = new Label("Ultimos movimentos");
         grid.add(tit, 0, 3);
 
-        ObservableList operacoesConta =
-        FXCollections.observableArrayList(
-            fachada.getOperacoesConta(this.nroConta)
-            .stream()
-            .collect(Collectors.toList())
-        );
+        ObservableList<Operacao> operacoesConta =
+            FXCollections.observableArrayList(
+                fachada.getOperacoesConta(this.nroConta)
+            );
 
-    ListView extrato = new ListView<>(operacoesConta);
-    extrato.setPrefHeight(140);
-    grid.add(extrato, 0, 4);
+        ListView<Operacao> extrato = new ListView<>(operacoesConta);
+        extrato.setPrefHeight(140);
+        grid.add(extrato, 0, 4);
 
         HBox valSaldo = new HBox(20);
         valSaldo.setAlignment(Pos.BOTTOM_LEFT);
@@ -91,10 +95,11 @@ public class TelaOperacoes {
         hbBtn.getChildren().add(btnVoltar);
         hbBtn.getChildren().add(btnEstatistica);
         grid.add(hbBtn, 1, 2);
+
         btnEstatistica.setOnAction(e -> {
-             TelaEstatistica toper = new TelaEstatistica(mainStage,cenaEntrada, this.nroConta);
-             Scene scene = toper.getTelaEstatistica();
-             mainStage.setScene(scene);
+            TelaEstatistica toper = new TelaEstatistica(mainStage, cenaEntrada, fachada, nroConta);
+            Scene scene = toper.getTelaEstatistica();
+            mainStage.setScene(scene);
         });
 
         btnCredito.setOnAction(e -> {
@@ -119,7 +124,9 @@ public class TelaOperacoes {
                 Alert alert = new Alert(AlertType.WARNING);
                 alert.setTitle("Valor inválido !!");
                 alert.setHeaderText(null);
-                alert.setContentText("Valor inválido para operacao de débito!");
+                alert.setContentText(
+                    "Valor inválido para operacao de débito, " +
+                        "ou limite de retirdada diário excedido!");
                 alert.showAndWait();
             }
         });

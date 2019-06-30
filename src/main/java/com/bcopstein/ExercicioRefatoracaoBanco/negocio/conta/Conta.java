@@ -1,4 +1,4 @@
-package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
+package com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta;
 
 public class Conta {
 
@@ -123,13 +123,6 @@ public class Conta {
     private final String correntista;
     private double saldo;
     private ContaState estado;
-
-    public Conta(int numero, String nome) {
-        this.numero = numero;
-        this.correntista = nome;
-        this.saldo = 0.0;
-        this.estado = new Silver();
-    }
 
     public Conta(int numero, String nome, double saldo, int status) {
         this.numero = numero;

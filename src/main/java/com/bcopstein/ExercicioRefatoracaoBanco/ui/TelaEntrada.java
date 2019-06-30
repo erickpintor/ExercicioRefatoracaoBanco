@@ -1,10 +1,7 @@
-package com.bcopstein.ExercicioRefatoracaoBanco;
+package com.bcopstein.ExercicioRefatoracaoBanco.ui;
 
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
-
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,17 +18,21 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class TelaEntrada {
-    private Stage mainStage;
-    private Scene cenaEntrada;
-    private Fachada fachada = new Fachada();
 
+    private final Fachada fachada;
+    private final Scene telaEntrada;
     private TextField tfContaCorrente;
 
-    public TelaEntrada(Stage anStage) {
-        mainStage = anStage;
+    public TelaEntrada(Stage mainStage, Fachada fachada) {
+        this.fachada = fachada;
+        this.telaEntrada = criaTelaEntrada(mainStage);
     }
 
     public Scene getTelaEntrada() {
+        return this.telaEntrada;
+    }
+
+    private Scene criaTelaEntrada(Stage mainStage) {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -59,18 +60,13 @@ public class TelaEntrada {
         grid.add(hbBtn, 1, 4);
 
         // Botao encerrar
-        btnOut.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                Platform.exit();
-            }
-        });
+        btnOut.setOnAction(e -> Platform.exit());
 
         btnIn.setOnAction(e -> {
-            Integer nroConta = Integer.parseInt(tfContaCorrente.getText());
+            int nroConta = Integer.parseInt(tfContaCorrente.getText());
 
             if (fachada.isConta(nroConta)) {
-                TelaOperacoes toper = new TelaOperacoes(mainStage, cenaEntrada,nroConta);
+                TelaOperacoes toper = new TelaOperacoes(mainStage, telaEntrada, fachada, nroConta);
                 Scene scene = toper.getTelaOperacoes();
                 mainStage.setScene(scene);
             } else {
@@ -82,8 +78,7 @@ public class TelaEntrada {
                 alert.showAndWait();
             }
         });
-        
-		cenaEntrada = new Scene(grid);
-		return cenaEntrada;
-	}
+
+        return new Scene(grid);
+    }
 }

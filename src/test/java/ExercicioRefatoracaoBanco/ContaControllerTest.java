@@ -1,28 +1,18 @@
 package ExercicioRefatoracaoBanco;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Conta;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.ContaController;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.ContaEstatistica;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.ContaException;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Operacao;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.OperacaoController;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.OperacaoException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ContaControllerTest {
     private Persistencia mockPersistencia = mock(Persistencia.class);
@@ -42,15 +32,6 @@ public class ContaControllerTest {
         Conta conta = ContaController.getConta(1995);
         assertTrue(conta != null);
     }
-
-  //  @Test
- //   public void getContaInvalidTest() {
- //       Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
- //       ContaController ContaController = new ContaController((contasUsuarios));
-  //      assertThrows(ContaException.class, () -> {
-  //          ContaController.getConta(199);
-  //      });
-  //  }
 
     @Test
     public void creditoContaTest() {

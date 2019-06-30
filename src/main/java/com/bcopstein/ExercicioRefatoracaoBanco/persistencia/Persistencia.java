@@ -1,4 +1,7 @@
-package com.bcopstein.ExercicioRefatoracaoBanco;
+package com.bcopstein.ExercicioRefatoracaoBanco.persistencia;
+
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.Conta;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.Operacao;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -6,16 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
-
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Conta;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Operacao;
+import java.util.*;
 
 public class Persistencia {
 
@@ -29,7 +23,8 @@ public class Persistencia {
     private final String NomeBDContas = "BDContasBNG.txt";
     private final String NomeBDOperacoes = "BDOperBNG.txt";
 
-    private Persistencia() {}
+    private Persistencia() {
+    }
 
     public Map<Integer, Conta> loadContas() {
         Map<Integer, Conta> contas = new HashMap<>();
@@ -55,35 +50,29 @@ public class Persistencia {
 
     public void saveContas(Collection<Conta> contas) {
         Path path1 = Paths.get(NomeBDContas);
-        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(path1, Charset.defaultCharset())))
-        {
-            for(Conta c: contas)
+        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(path1, Charset.defaultCharset()))) {
+            for (Conta c : contas)
                 writer.format(Locale.ENGLISH,
-                		      "%d;%s;%f;%d;",
-                		      c.getNumero(),c.getCorrentista(),
-                              c.getSaldo(),c.getStatus());
-        }
-        catch (IOException x)
-        {
+                    "%d;%s;%f;%d;",
+                    c.getNumero(), c.getCorrentista(),
+                    c.getSaldo(), c.getStatus());
+        } catch (IOException x) {
             System.err.format("Erro de E/S: %s%n", x);
         }
     }
 
     public void saveOperacoes(Collection<Operacao> operacoes) {
         Path path1 = Paths.get(NomeBDOperacoes);
-        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(path1, Charset.defaultCharset())))
-        {
-            for(Operacao op:operacoes)
+        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(path1, Charset.defaultCharset()))) {
+            for (Operacao op : operacoes)
                 writer.format(Locale.ENGLISH,
-                		      "%d;%d;%d;%d;%d;%d;%d;%d;%f;%d;",
-                              op.getDia(),op.getMes(),op.getAno(),
-                              op.getHora(),op.getMinuto(),op.getSegundo(),
-                              op.getNumeroConta(),op.getStatusConta(),
-                              op.getValorOperacao(),op.getTipoOperacao()
-                             );
-        }
-        catch (IOException x)
-        {
+                    "%d;%d;%d;%d;%d;%d;%d;%d;%f;%d;",
+                    op.getDia(), op.getMes(), op.getAno(),
+                    op.getHora(), op.getMinuto(), op.getSegundo(),
+                    op.getNumeroConta(), op.getStatusConta(),
+                    op.getValorOperacao(), op.getTipoOperacao()
+                );
+        } catch (IOException x) {
             System.err.format("Erro de E/S: %s%n", x);
         }
     }
