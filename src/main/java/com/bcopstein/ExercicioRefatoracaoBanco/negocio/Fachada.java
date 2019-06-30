@@ -1,5 +1,6 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 
+import com.bcopstein.ExercicioRefatoracaoBanco.lang.Observable;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.Conta;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaController;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaEstatistica;
@@ -8,7 +9,6 @@ import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.OperacaoControll
 import com.bcopstein.ExercicioRefatoracaoBanco.persistencia.Persistencia;
 
 import java.util.GregorianCalendar;
-import java.util.List;
 
 public class Fachada {
 
@@ -99,7 +99,7 @@ public class Fachada {
         );
     }
 
-    public List<Operacao> getOperacoesConta(int numero) {
+    public Observable<Operacao> getOperacoesConta(int numero) {
         return operacoes.getOperacoesConta(numero);
     }
 

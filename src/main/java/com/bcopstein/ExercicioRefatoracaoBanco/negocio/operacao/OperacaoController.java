@@ -1,40 +1,29 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao;
 
+import com.bcopstein.ExercicioRefatoracaoBanco.lang.Observable;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaEstatistica;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OperacaoController {
 
     private static final int DIAS_NO_MES = 30;
-    private final List<Operacao> operacoes;
+    private final Observable<Operacao> operacoes;
 
-    public OperacaoController(List<Operacao> listaOperacoes) {
-        this.operacoes = listaOperacoes;
+    public OperacaoController(List<Operacao> operacoes) {
+        this.operacoes = new Observable<>(operacoes);
     }
 
     public List<Operacao> getOperacoes() {
-        return this.operacoes;
+        return this.operacoes.unwrap();
     }
 
-    public List<Operacao> getOperacoesConta(int numeroConta) {
-        List<Operacao> operacoesConta = new ArrayList<>();
-        for (Operacao operacao : this.operacoes) {
-            if (operacao.getNumeroConta() == numeroConta) {
-                operacoesConta.add(operacao);
-            }
-        }
-
-        if (operacoesConta.isEmpty()) {
-            return null;
-        }
-
-        return operacoesConta;
+    public Observable<Operacao> getOperacoesConta(int numeroConta) {
+        return operacoes.filter(o -> o.getNumeroConta() == numeroConta);
     }
 
-    public Double valorDiarioDebito(int numeroConta, int dia, int mes, int ano) {
-        List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
+    public double valorDiarioDebito(int numeroConta, int dia, int mes, int ano) {
+        List<Operacao> operacoesConta = getOperacoesConta(numeroConta).unwrap();
         double totalDebitoConta = 0.0;
 
         for (Operacao operacaoConta : operacoesConta) {
@@ -57,7 +46,7 @@ public class OperacaoController {
         int quantidadeDebito = 0;
         int quantidadeCredito = 0;
 
-        List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
+        List<Operacao> operacoesConta = getOperacoesConta(numeroConta).unwrap();
         for (Operacao operacaoConta : operacoesConta) {
             if (operacaoConta.getAno() == ano) {
                 if (operacaoConta.getMes() == mes) {
@@ -82,8 +71,8 @@ public class OperacaoController {
         );
     }
 
-    private Double saldoMedioMes(int numeroConta, int mes) {
-        List<Operacao> operacoesConta = getOperacoesConta(numeroConta);
+    private double saldoMedioMes(int numeroConta, int mes) {
+        List<Operacao> operacoesConta = getOperacoesConta(numeroConta).unwrap();
         double[] saldosMes = new double[DIAS_NO_MES];
         double saldoTotal = 0;
 
@@ -133,6 +122,6 @@ public class OperacaoController {
             tipoOperacao
         );
 
-        this.operacoes.add(op);
+        operacoes.add(op);
     }
 }

@@ -5,53 +5,61 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class Observable<E> {
 
     private final List<WeakReference<Consumer<E>>> observers = new LinkedList<>();
-    private E subject;
+    private final List<E> elements;
 
-    public Observable(E subject) {
-        this.subject = subject;
+    public Observable(List<E> elements) {
+        this.elements = elements;
     }
 
-    public E get() {
-        return subject;
+    public List<E> unwrap() {
+        return elements;
     }
 
-    public void set(E subject) {
-        this.subject = subject;
-        notifyObservers();
+    public void add(E element) {
+        elements.add(element);
+        notifyAdded(element);
     }
 
-    public void update(Consumer<E> updater) {
-        updater.accept(subject);
-        notifyObservers();
+    public void onAdded(Consumer<E> fn) {
+        observers.add(new WeakReference<>(fn));
     }
 
-    public Object addObserver(Consumer<E> observer) {
-        WeakReference<Consumer<E>> ref = new WeakReference<>(observer);
-        observers.add(ref);
-        return ref;
-    }
+    public Observable<E> filter(Function<E, Boolean> predicate) {
+        List<E> newList = new LinkedList<>();
 
-    public void removeObserver(Object identifier) {
-        if (identifier instanceof WeakReference) {
-            observers.remove(identifier);
+        for (E element : elements) {
+            if (predicate.apply(element)) {
+                newList.add(element);
+            }
         }
+
+        Observable<E> newObservable = new Observable<>(newList);
+
+        onAdded(e -> {
+            if (predicate.apply(e)) {
+                newObservable.add(e);
+            }
+        });
+
+        return newObservable;
     }
 
-    public void notifyObservers() {
-        Iterator<WeakReference<Consumer<E>>> iter = observers.iterator();
+    private void notifyAdded(E element) {
+        Iterator<WeakReference<Consumer<E>>> refs = observers.iterator();
 
-        while (iter.hasNext()) {
-            WeakReference<Consumer<E>> ref = iter.next();
+        while (refs.hasNext()) {
+            WeakReference<Consumer<E>> ref = refs.next();
             Consumer<E> observer = ref.get();
 
             if (observer != null) {
-                observer.accept(subject);
+                observer.accept(element);
             } else {
-                iter.remove();
+                refs.remove();
             }
         }
     }

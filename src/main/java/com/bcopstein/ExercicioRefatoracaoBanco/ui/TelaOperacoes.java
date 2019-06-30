@@ -1,5 +1,6 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.ui;
 
+import com.bcopstein.ExercicioRefatoracaoBanco.lang.Observable;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.Conta;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.Operacao;
@@ -63,12 +64,11 @@ class TelaOperacoes {
         Label tit = new Label("Ultimos movimentos");
         grid.add(tit, 0, 3);
 
-        ObservableList<Operacao> operacoesConta =
-            FXCollections.observableArrayList(
-                fachada.getOperacoesConta(this.nroConta)
-            );
+        Observable<Operacao> operacoes = fachada.getOperacoesConta(this.nroConta);
+        ObservableList<Operacao> operacoesUI = FXCollections.observableArrayList(operacoes.unwrap());
+        operacoes.onAdded(operacoesUI::add);
 
-        ListView<Operacao> extrato = new ListView<>(operacoesConta);
+        ListView<Operacao> extrato = new ListView<>(operacoesUI);
         extrato.setPrefHeight(140);
         grid.add(extrato, 0, 4);
 
