@@ -1,7 +1,5 @@
 package com.bcopstein.ExercicioRefatoracaoBanco;
 
-// talvez tenha que ter um atributo para a classe Conta pois tenho que ter um filtro pra trazer somente 
-//as operacoes de uma conta apenas.
 public class Operacao {
 
 	public final int CREDITO = 0;
