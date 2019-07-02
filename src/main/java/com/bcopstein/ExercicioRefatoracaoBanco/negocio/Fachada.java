@@ -3,7 +3,7 @@ package com.bcopstein.ExercicioRefatoracaoBanco.negocio;
 import com.bcopstein.ExercicioRefatoracaoBanco.lang.Observable;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.Conta;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaController;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaEstatistica;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.ContaEstatistica;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.Operacao;
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.OperacaoController;
 import com.bcopstein.ExercicioRefatoracaoBanco.persistencia.Persistencia;

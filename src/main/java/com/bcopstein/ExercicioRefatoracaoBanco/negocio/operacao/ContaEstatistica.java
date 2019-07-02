@@ -1,4 +1,4 @@
-package com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta;
+package com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao;
 
 public class ContaEstatistica {
 
@@ -9,12 +9,12 @@ public class ContaEstatistica {
     private final int quantidadeCredito;
     private final double saldoMedioMes;
 
-    public ContaEstatistica(int totalCredito,
-                            int totalDebito,
-                            int quantidadeDebito,
-                            int quantidadeCredito,
-                            double saldoMedioMes,
-                            String nomeCorrentista) {
+    ContaEstatistica(int totalCredito,
+                     int totalDebito,
+                     int quantidadeDebito,
+                     int quantidadeCredito,
+                     double saldoMedioMes,
+                     String nomeCorrentista) {
 
         this.totalCredito = totalCredito;
         this.totalDebito = totalDebito;

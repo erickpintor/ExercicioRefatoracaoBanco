@@ -1,7 +1,7 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.ui;
 
 import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Fachada;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaEstatistica;
+import com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao.ContaEstatistica;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

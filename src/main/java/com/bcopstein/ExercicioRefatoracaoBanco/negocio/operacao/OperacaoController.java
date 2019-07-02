@@ -1,7 +1,6 @@
 package com.bcopstein.ExercicioRefatoracaoBanco.negocio.operacao;
 
 import com.bcopstein.ExercicioRefatoracaoBanco.lang.Observable;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta.ContaEstatistica;
 
 import java.util.List;
 

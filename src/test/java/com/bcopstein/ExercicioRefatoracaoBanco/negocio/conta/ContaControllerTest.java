@@ -1,8 +1,6 @@
-package ExercicioRefatoracaoBanco;
+package com.bcopstein.ExercicioRefatoracaoBanco.negocio.conta;
 
-import com.bcopstein.ExercicioRefatoracaoBanco.Persistencia;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.Conta;
-import com.bcopstein.ExercicioRefatoracaoBanco.negocio.ContaController;
+import com.bcopstein.ExercicioRefatoracaoBanco.persistencia.Persistencia;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,15 +8,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContaControllerTest {
+class ContaControllerTest {
+
     private Persistencia mockPersistencia = mock(Persistencia.class);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         Map<Integer, Conta> contas = new HashMap<>();
         Conta conta = new Conta(1995, "gustavo", 5100, 0);
         contas.put(1995, conta);
@@ -26,15 +25,14 @@ public class ContaControllerTest {
     }
 
     @Test
-    public void getContaTest() {
+    void getContaTest() {
         Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
         ContaController ContaController = new ContaController((contasUsuarios));
-        Conta conta = ContaController.getConta(1995);
-        assertTrue(conta != null);
+        assertNotNull(ContaController.getConta(1995));
     }
 
     @Test
-    public void creditoContaTest() {
+    void creditoContaTest() {
         Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
         ContaController ContaController = new ContaController((contasUsuarios));
         Conta conta = ContaController.getConta(1995);
@@ -43,7 +41,7 @@ public class ContaControllerTest {
     }
 
     @Test
-    public void debitoContaValidoTest() {
+    void debitoContaValidoTest() {
         Map<Integer, Conta> contasUsuarios = mockPersistencia.loadContas();
         ContaController ContaController = new ContaController((contasUsuarios));
         Conta conta = ContaController.getConta(1995);
